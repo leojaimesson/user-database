@@ -27,7 +27,7 @@ docker-compose down
 Write a new migration in the `db/migration` folder
 
 ## Services that consume this database
-- [ms-register-user]()
+- [ms-register-user](https://github.com/leojaimesson/ms-register-user)
 
 ## Diagram
 <img src="./images/user_database.png" style="max-width:350px; width:100%">
