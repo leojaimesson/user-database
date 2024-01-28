@@ -1,0 +1,31 @@
+version: '3'
+
+services:
+  postgres:
+    image: postgres:16.1
+    container_name: user_database
+    environment:
+      POSTGRES_USER: ${DATABASE_USER:-root}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD:-root}
+      POSTGRES_DB: ${DATABASE_NAME:-user_database}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+  flyway:
+    container_name: user_migrations
+    image: flyway/flyway:10.5.0
+    command: ["migrate"]
+    depends_on:
+      - postgres
+    environment:
+      - FLYWAY_URL=jdbc:postgresql://postgres:5432/${DATABASE_NAME:-user_database}
+      - FLYWAY_USER=${DATABASE_USER:-root}
+      - FLYWAY_PASSWORD=${DATABASE_PASSWORD:-root}
+      - FLYWAY_LOCATIONS=filesystem:/db/migration
+    volumes:
+      - ./db/migration:/db/migration
+
+volumes:
+  postgres-data:
