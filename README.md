@@ -26,8 +26,49 @@ docker-compose down
 
 Write a new migration in the `db/migration` folder
 
-## Services that consume this database
-- [ms-register-user](https://github.com/leojaimesson/ms-register-user)
-
 ## Diagram
-<img src="./images/user_database.png" style="max-width:350px; width:100%">
+
+```mermaid
+erDiagram
+    USERS {
+        UUID id PK "DEFAULT gen_random_uuid()"
+        VARCHAR email "NOT NULL"
+        VARCHAR password "NOT NULL"
+        BOOLEAN enabled "DEFAULT false"
+        TIMESTAMP created_at "DEFAULT current_timestamp"
+        TIMESTAMP updated_at "DEFAULT current_timestamp"
+    }
+
+    USERS_CONFIRMATION_TYPE {
+        UUID id PK "DEFAULT gen_random_uuid()"
+        VARCHAR type_name "NOT NULL"
+    }
+
+    USERS_CONFIRMATION {
+        UUID id PK "DEFAULT gen_random_uuid()"
+        UUID user_id FK "REFERENCES users(id)"
+        VARCHAR confirmation_token "NOT NULL"
+        UUID confirmation_type_id FK "REFERENCES users_confirmation_type(id)"
+        TIMESTAMP created_at "DEFAULT current_timestamp"
+        TIMESTAMP updated_at "DEFAULT current_timestamp"
+        BOOLEAN confirmed "DEFAULT false"
+    }
+
+    USERS_PERSONAL_DATA {
+        UUID id PK "DEFAULT gen_random_uuid()"
+        UUID user_id FK "REFERENCES users(id)"
+        VARCHAR first_name "NOT NULL"
+        VARCHAR last_name "NOT NULL"
+        VARCHAR street 
+        VARCHAR city 
+        VARCHAR state 
+        VARCHAR zip_code 
+        VARCHAR phone_number 
+        TIMESTAMP created_at "DEFAULT current_timestamp"
+        TIMESTAMP updated_at "DEFAULT current_timestamp"
+    }
+
+    USERS ||--o{ USERS_CONFIRMATION : "has"
+    USERS_CONFIRMATION_TYPE ||--o{ USERS_CONFIRMATION : "has"
+    USERS ||--o{ USERS_PERSONAL_DATA : "has"
+```
